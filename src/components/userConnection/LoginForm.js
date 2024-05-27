@@ -1,6 +1,8 @@
 import React, {useState} from 'react';
 import {useNavigate} from 'react-router-dom';
 import {authenticate} from "../tools/requests";
+import LoginButton from "../UI/LoginButton";
+
 
 function LoginForm({onLogin}) {
     const [username, setUsername] = useState('');
@@ -47,6 +49,8 @@ function LoginForm({onLogin}) {
                     required
                 />
                 <button type="submit">Login</button>
+                <br/>
+                <LoginButton/>
                 <br/>
                 <button onClick={handleSwitchToSignup}>Switch to Signup</button>
             </form>
