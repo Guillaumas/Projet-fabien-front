@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import LabelPopup from './LabelPopup';
+
 
 const TaskForm = ({ onSubmit, initialTask }) => {
     const [task, setTask] = useState({ title: '', description: '', completed: false });
@@ -20,6 +22,10 @@ const TaskForm = ({ onSubmit, initialTask }) => {
         setTask({ title: '', description: '', completed: false });
     };
 
+    const handleLabelCreated = (newLabel) => {
+        setTask({ ...task, labels: [...task.labels, newLabel] });
+    };
+
     return (
         <form onSubmit={handleSubmit}>
             <input
@@ -37,6 +43,7 @@ const TaskForm = ({ onSubmit, initialTask }) => {
                 onChange={handleChange}
                 required
             />
+            <LabelPopup onLabelCreated={handleLabelCreated} />
             <button type="submit">Save Task</button>
         </form>
     );

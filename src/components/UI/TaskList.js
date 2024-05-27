@@ -1,5 +1,5 @@
 import React from 'react';
-import Task from './model/Task';
+import Task from '../model/Task';
 
 const TaskList = ({ tasks, onDelete, onUpdate }) => {
     if (!Array.isArray(tasks)) {

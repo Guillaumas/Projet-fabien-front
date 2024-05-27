@@ -1,24 +1,27 @@
-import React, { useState } from 'react';
-import axiosInstance from '../../axiosConfig';
-import { useNavigate } from 'react-router-dom';
+import React, {useState} from 'react';
+import {useNavigate} from 'react-router-dom';
+import {authenticate} from "../tools/requests";
 
-function LoginForm({ onLogin }) {
+function LoginForm({onLogin}) {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
     const navigate = useNavigate();
 
-    const handleSubmit = async (e) => {
+    const handleSubmit = (e) => {
         e.preventDefault();
-        try {
-            const response = await axiosInstance.post('/api/auth/login', { username, password });
-            localStorage.setItem('token', response.data.token);
-            if (response.status === 200) {
+        authenticate(
+            '/api/auth/login',
+            { username, password },
+            (response) => {
+                localStorage.setItem('token', response.data.token);
                 onLogin();
+                navigate('/dashboard');
+            },
+            (err) => {
+                setError('Login failed');
             }
-        } catch (err) {
-            setError('Login failed');
-        }
+        );
     };
 
     const handleSwitchToSignup = () => {

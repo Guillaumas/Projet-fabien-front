@@ -2,7 +2,7 @@ import React, {useState} from 'react';
 import {BrowserRouter as Router, Navigate, Route, Routes} from 'react-router-dom';
 import LoginForm from "./components/userConnection/LoginForm";
 import SignupForm from "./components/userConnection/SignupForm";
-import Dashboard from "./components/dashboard/Dashboard";
+import Dashboard from "./components/UI/Dashboard";
 
 function App() {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -14,6 +14,8 @@ function App() {
     };
 
     const handleLogout = () => {
+        localStorage.removeItem('token');
+        window.location.reload();
         setIsAuthenticated(false);
         setSuccessMessage('');
     };
@@ -22,10 +24,13 @@ function App() {
         <Router>
             <div className="App">
                 <Routes>
-                    <Route path="/login" element={<LoginForm onLogin={handleLogin}/>}/>
-                    <Route path="/signup" element={<SignupForm onSignup={handleLogin}/>}/>
+                    //check if the user is authenticated before accesing login/register page
+                    <Route path="/login" element={isAuthenticated ? <Navigate to="/dashboard"/> : <LoginForm onLogin={handleLogin}/>}/>
+                    <Route path="/signup" element={isAuthenticated ? <Navigate to="/dashboard"/> : <SignupForm onSignup={handleLogin}/>}/>
                     <Route path="/dashboard"
-                           element={isAuthenticated ? <Dashboard onLogout={handleLogout} successMessage={successMessage}/> : <Navigate to="/login"/>}/>
+                           element={isAuthenticated ?
+                               <Dashboard onLogout={handleLogout} successMessage={successMessage}/> :
+                               <Navigate to="/login"/>}/>
                     <Route path="/" element={<Navigate to="/login"/>}/>
                 </Routes>
             </div>
