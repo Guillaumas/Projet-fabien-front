@@ -1,8 +1,13 @@
-import React, { useState } from 'react';
-import { postData, fetchData } from "../tools/requests";
+import React, {useState} from 'react';
+import {postData, fetchData} from "../tools/requests";
+import EditTodoListForm from "./EditTodoListForm";
 
-const TodoList = ({ todoLists, setTodoLists }) => {
+const TodoList = ({todoLists, setTodoLists}) => {
     const [newListTitle, setNewListTitle] = useState('');
+    const [editTodoList, setEditTodoList] = useState(null);
+    const [selectedList, setSelectedList] = useState(null);
+
+
 
     const createTodoList = () => {
         if (!newListTitle) {
@@ -13,6 +18,11 @@ const TodoList = ({ todoLists, setTodoLists }) => {
             setNewListTitle('');
             fetchData('http://localhost:8080/api/todolists', setTodoLists);
         });
+    };
+
+    const handleEditTodoList = (list) => {
+        setSelectedList(list.id);
+        setEditTodoList(list);
     };
 
     return (
@@ -28,6 +38,9 @@ const TodoList = ({ todoLists, setTodoLists }) => {
             {todoLists.map((list) => (
                 <div key={list.id}>
                     <h2>{list.title}</h2>
+                    <button onClick={() => handleEditTodoList(list)}>Details</button>
+                    <button>Tasks</button>
+                    {selectedList === list.id && editTodoList === list && <EditTodoListForm todoList={editTodoList} setTodoLists={setTodoLists} />}
                 </div>
             ))}
         </div>

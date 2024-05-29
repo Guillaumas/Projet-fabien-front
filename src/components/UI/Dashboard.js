@@ -41,8 +41,7 @@ function Dashboard({onLogout, successMessage}) {
             {successMessage && <p>{successMessage}</p>}
             <button onClick={onLogout}>Logout</button>
             <TodoList todoLists={todoLists} setTodoLists={setTodoLists} setSelectedTodoList={setSelectedTodoList} />
-            {selectedTodoList && <Task tasks={tasks} setTasks={setTasks} todoListId={selectedTodoList.id} setSelectedTask={setSelectedTask} />}
-            {selectedTask && <Label task={selectedTask} setTask={setSelectedTask} />}
+            {selectedTodoList && (selectedTodoList.tasks.length > 0 ? <Task tasks={tasks} setTasks={setTasks} todoListId={selectedTodoList.id} setSelectedTask={setSelectedTask} /> : <Label task={{labels: []}} setTask={setSelectedTask} />)}            {selectedTask && <Label task={selectedTask} setTask={setSelectedTask} />}
         </div>
     );
 }

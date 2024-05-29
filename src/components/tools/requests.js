@@ -11,6 +11,7 @@ export async function authenticate(url, data, onSuccess, onError) {
     }
 }
 
+
 export async function fetchData(url, setData) {
     const response = await axiosInstance.get(url);
     if (response && response.data) {
