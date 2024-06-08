@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import {fetchData, updateData} from "../tools/requests";
-import Button from '@material-ui/core/Button';
-import TextField from '@material-ui/core/TextField';
-import FormControl from '@material-ui/core/FormControl';
+import { Button } from '@mui/material';
+import { TextField } from '@mui/material';
+import { FormControl } from '@mui/material';
 
 const EditTodoListForm = ({ todoList, setTodoLists }) => {
     const [title, setTitle] = useState(todoList.title);

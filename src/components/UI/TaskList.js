@@ -1,7 +1,7 @@
 import React from 'react';
 import Task from '../model/Task';
-import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
+import { List } from '@mui/material';
+import { ListItem } from '@mui/material';
 
 const TaskList = ({ tasks, onDelete, onUpdate }) => {
     if (!Array.isArray(tasks)) {

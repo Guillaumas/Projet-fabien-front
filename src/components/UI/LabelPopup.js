@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { postData } from "../tools/requests";
-import Button from '@material-ui/core/Button';
-import TextField from '@material-ui/core/TextField';
+import { Button } from '@mui/material';
+import { TextField } from '@mui/material';
 
 const LabelPopup = ({ onLabelCreated }) => {
     const [newLabel, setNewLabel] = useState('');

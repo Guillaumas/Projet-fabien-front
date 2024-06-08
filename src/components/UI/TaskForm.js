@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import LabelPopup from './LabelPopup';
-import TextField from '@material-ui/core/TextField';
-import Button from '@material-ui/core/Button';
-import FormControl from '@material-ui/core/FormControl';
+import { TextField } from '@mui/material';
+import { Button } from '@mui/material';
+import { FormControl } from '@mui/material';
 
 const TaskForm = ({ onSubmit, initialTask }) => {
     const [task, setTask] = useState({ title: '', description: '', completed: false });

@@ -1,9 +1,9 @@
 import React, {useState} from 'react';
 import {postData} from "../tools/requests";
 import EditLabelForm from "./EditLabelForm";
-import Button from '@material-ui/core/Button';
-import TextField from '@material-ui/core/TextField';
-import Typography from '@material-ui/core/Typography';
+import { Button } from '@mui/material';
+import { TextField } from '@mui/material';
+import { Typography } from '@mui/material';
 
 const Label = ({task, setTask}) => {
     const [newLabel, setNewLabel] = useState('');

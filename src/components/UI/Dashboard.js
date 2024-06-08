@@ -3,8 +3,8 @@ import {fetchData, postData} from "../tools/requests";
 import TodoList from './TodoList';
 import Task from './Task';
 import Label from './Label';
-import Typography from "@material-ui/core/Typography";
-import Button from "@material-ui/core/Button";
+import { Button } from '@mui/material';
+import { Typography } from '@mui/material';
 
 function Dashboard({onLogout, successMessage}) {
     const [tasks, setTasks] = useState([]);

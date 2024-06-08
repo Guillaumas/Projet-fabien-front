@@ -2,10 +2,10 @@ import React, {useState} from 'react';
 import {postData, fetchData} from "../tools/requests";
 import EditTodoListForm from "./EditTodoListForm";
 import TaskForm from "./TaskForm";
-import TextField from "@material-ui/core/TextField";
-import Button from "@material-ui/core/Button";
-import List from "@material-ui/core/List";
-import ListItem from "@material-ui/core/ListItem";
+import { Button } from '@mui/material';
+import { TextField } from '@mui/material';
+import { List } from '@mui/material';
+import { ListItem } from '@mui/material';
 
 const TodoList = ({todoLists, setTodoLists}) => {
     const [newListTitle, setNewListTitle] = useState('');

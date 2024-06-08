@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import {postData} from "../tools/requests";
-import EditTaskForm from "./EditTaskForm";
+import EditTaskForm from "../UI/EditTaskForm";
 
 const Task = ({tasks, setTasks, todoListId}) => {
     const [newTask, setNewTask] = useState('');

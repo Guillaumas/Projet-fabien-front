@@ -1,10 +1,10 @@
 import React, {useState} from 'react';
 import {postData} from "../tools/requests";
 import EditTaskForm from "./EditTaskForm";
-import Button from '@material-ui/core/Button';
-import TextField from '@material-ui/core/TextField';
-import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
+import { Button } from '@mui/material';
+import { TextField } from '@mui/material';
+import { List } from '@mui/material';
+import { ListItem } from '@mui/material';
 
 const Task = ({tasks, setTasks, todoListId}) => {
     const [newTask, setNewTask] = useState('');
