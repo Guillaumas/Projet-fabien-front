@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import LabelPopup from './LabelPopup';
-
+import TextField from '@material-ui/core/TextField';
+import Button from '@material-ui/core/Button';
+import FormControl from '@material-ui/core/FormControl';
 
 const TaskForm = ({ onSubmit, initialTask }) => {
     const [task, setTask] = useState({ title: '', description: '', completed: false });
@@ -27,8 +29,8 @@ const TaskForm = ({ onSubmit, initialTask }) => {
     };
 
     return (
-        <form onSubmit={handleSubmit}>
-            <input
+        <FormControl onSubmit={handleSubmit}>
+            <TextField
                 type="text"
                 name="title"
                 placeholder="Title"
@@ -36,7 +38,8 @@ const TaskForm = ({ onSubmit, initialTask }) => {
                 onChange={handleChange}
                 required
             />
-            <textarea
+            <TextField
+                multiline
                 name="description"
                 placeholder="Description"
                 value={task.description}
@@ -44,8 +47,8 @@ const TaskForm = ({ onSubmit, initialTask }) => {
                 required
             />
             <LabelPopup onLabelCreated={handleLabelCreated} />
-            <button type="submit">Save Task</button>
-        </form>
+            <Button type="submit" variant="contained" color="primary">Save Task</Button>
+        </FormControl>
     );
 };
 

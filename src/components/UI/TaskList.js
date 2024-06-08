@@ -1,5 +1,7 @@
 import React from 'react';
 import Task from '../model/Task';
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
 
 const TaskList = ({ tasks, onDelete, onUpdate }) => {
     if (!Array.isArray(tasks)) {
@@ -7,11 +9,13 @@ const TaskList = ({ tasks, onDelete, onUpdate }) => {
     }
 
     return (
-        <div>
+        <List>
             {tasks.map(task => (
-                <Task key={task.id} task={task} onDelete={onDelete} onUpdate={onUpdate} />
+                <ListItem key={task.id}>
+                    <Task task={task} onDelete={onDelete} onUpdate={onUpdate} />
+                </ListItem>
             ))}
-        </div>
+        </List>
     );
 };
 

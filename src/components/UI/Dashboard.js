@@ -3,6 +3,8 @@ import {fetchData, postData} from "../tools/requests";
 import TodoList from './TodoList';
 import Task from './Task';
 import Label from './Label';
+import Typography from "@material-ui/core/Typography";
+import Button from "@material-ui/core/Button";
 
 function Dashboard({onLogout, successMessage}) {
     const [tasks, setTasks] = useState([]);
@@ -37,11 +39,12 @@ function Dashboard({onLogout, successMessage}) {
 
     return (
         <div>
-            <h1>Dashboard</h1>
+            <Typography variant="h1">Dashboard</Typography>
             {successMessage && <p>{successMessage}</p>}
-            <button onClick={onLogout}>Logout</button>
+            <Button onClick={onLogout} variant="contained" color="primary">Logout</Button>
             <TodoList todoLists={todoLists} setTodoLists={setTodoLists} setSelectedTodoList={setSelectedTodoList} />
-            {selectedTodoList && (selectedTodoList.tasks.length > 0 ? <Task tasks={tasks} setTasks={setTasks} todoListId={selectedTodoList.id} setSelectedTask={setSelectedTask} /> : <Label task={{labels: []}} setTask={setSelectedTask} />)}            {selectedTask && <Label task={selectedTask} setTask={setSelectedTask} />}
+            {selectedTodoList && (selectedTodoList.tasks.length > 0 ? <Task tasks={tasks} setTasks={setTasks} todoListId={selectedTodoList.id} setSelectedTask={setSelectedTask} /> : <Label task={{labels: []}} setTask={setSelectedTask} />)}
+            {selectedTask && <Label task={selectedTask} setTask={setSelectedTask} />}
         </div>
     );
 }

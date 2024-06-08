@@ -1,5 +1,8 @@
 import React, {useState} from 'react';
 import {fetchData, updateData} from "../tools/requests";
+import Button from '@material-ui/core/Button';
+import TextField from '@material-ui/core/TextField';
+import FormControl from '@material-ui/core/FormControl';
 
 const EditTaskForm = ({task, setTasks}) => {
     const [title, setTitle] = useState(task.title);
@@ -12,15 +15,15 @@ const EditTaskForm = ({task, setTasks}) => {
     };
 
     return (
-        <form onSubmit={handleSubmit}>
-            <input
+        <FormControl onSubmit={handleSubmit}>
+            <TextField
                 type="text"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 required
             />
-            <button type="submit">Update Task</button>
-        </form>
+            <Button type="submit" variant="contained" color="primary">Update Task</Button>
+        </FormControl>
     );
 };
 

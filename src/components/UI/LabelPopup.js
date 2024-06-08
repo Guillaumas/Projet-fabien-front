@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { postData } from "../tools/requests";
+import Button from '@material-ui/core/Button';
+import TextField from '@material-ui/core/TextField';
 
 const LabelPopup = ({ onLabelCreated }) => {
     const [newLabel, setNewLabel] = useState('');
@@ -17,13 +19,13 @@ const LabelPopup = ({ onLabelCreated }) => {
 
     return (
         <div>
-            <input
+            <TextField
                 type="text"
                 value={newLabel}
                 onChange={(e) => setNewLabel(e.target.value)}
                 placeholder="New label"
             />
-            <button onClick={handleAddLabel}>Add Label</button>
+            <Button onClick={handleAddLabel} variant="contained" color="primary">Add Label</Button>
         </div>
     );
 };

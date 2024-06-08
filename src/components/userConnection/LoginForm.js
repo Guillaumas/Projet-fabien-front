@@ -1,6 +1,10 @@
 import React, {useState} from 'react';
 import {useNavigate} from 'react-router-dom';
 import {authenticate} from "../tools/requests";
+import Button from '@material-ui/core/Button';
+import TextField from '@material-ui/core/TextField';
+import Typography from '@material-ui/core/Typography';
+import FormControl from '@material-ui/core/FormControl';
 
 function LoginForm({onLogin}) {
     const [username, setUsername] = useState('');
@@ -30,26 +34,26 @@ function LoginForm({onLogin}) {
 
     return (
         <div>
-            <h1>Login</h1>
-            <form onSubmit={handleSubmit}>
-                <input
+            <Typography variant="h1">Login</Typography>
+            <FormControl onSubmit={handleSubmit}>
+                <TextField
                     type="text"
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
                     placeholder="Username"
                     required
                 />
-                <input
+                <TextField
                     type="password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="Password"
                     required
                 />
-                <button type="submit">Login</button>
+                <Button type="submit" variant="contained" color="primary">Login</Button>
                 <br/>
-                <button onClick={handleSwitchToSignup}>Switch to Signup</button>
-            </form>
+                <Button onClick={handleSwitchToSignup} variant="contained" color="primary">Switch to Signup</Button>
+            </FormControl>
             {error && <p>{error}</p>}
         </div>
     );

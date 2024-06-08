@@ -1,6 +1,9 @@
 import React, {useState} from 'react';
 import {postData} from "../tools/requests";
 import EditLabelForm from "./EditLabelForm";
+import Button from '@material-ui/core/Button';
+import TextField from '@material-ui/core/TextField';
+import Typography from '@material-ui/core/Typography';
 
 const Label = ({task, setTask}) => {
     const [newLabel, setNewLabel] = useState('');
@@ -25,19 +28,19 @@ const Label = ({task, setTask}) => {
 
     return (
         <div>
-            <h2>Labels</h2>
-            <input
+            <Typography variant="h2">Labels</Typography>
+            <TextField
                 type="text"
                 value={newLabel}
                 onChange={(e) => setNewLabel(e.target.value)}
                 placeholder="New label"
             />
-            <button onClick={handleAddLabel}>Add Label</button>
+            <Button onClick={handleAddLabel} variant="contained" color="primary">Add Label</Button>
             <ul>
                 {task.labels.map(label => (
                     <li key={label.id}>
                         <span>{label.name}</span>
-                        <button onClick={() => handleEditLabel(label)}>Edit</button>
+                        <Button onClick={() => handleEditLabel(label)} variant="contained" color="primary">Edit</Button>
                         {editLabel === label && <EditLabelForm label={editLabel} setLabels={setTask.labels}/>}
                     </li>
                 ))}

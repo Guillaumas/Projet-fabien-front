@@ -2,6 +2,10 @@ import React, {useState} from 'react';
 import {postData, fetchData} from "../tools/requests";
 import EditTodoListForm from "./EditTodoListForm";
 import TaskForm from "./TaskForm";
+import TextField from "@material-ui/core/TextField";
+import Button from "@material-ui/core/Button";
+import List from "@material-ui/core/List";
+import ListItem from "@material-ui/core/ListItem";
 
 const TodoList = ({todoLists, setTodoLists}) => {
     const [newListTitle, setNewListTitle] = useState('');
@@ -47,26 +51,28 @@ const TodoList = ({todoLists, setTodoLists}) => {
     };
 
     return (
-        <div>
+        <div className="todo-list">
             <h2>Todo Lists</h2>
-            <input
+            <TextField
                 type="text"
                 placeholder="New Todo List"
                 value={newListTitle}
                 onChange={(e) => setNewListTitle(e.target.value)}
             />
-            <button onClick={createTodoList}>Create Todo List</button>
-            {todoLists.map((list) => (
-                <div key={list.id}>
-                    <h2>{list.title}</h2>
-                    <button onClick={() => handleEditTodoList(list)}>Edit Name</button>
-                    <button onClick={() => handleCreateTask(list)}>Create Task</button>
-                    {isTaskFormVisible && creatingTaskForList === list &&
-                        <TaskForm onSubmit={handleTaskCreated}/>}
-                    {isTodoListFormVisible && selectedList === list.id && editTodoList === list &&
-                        <EditTodoListForm todoList={editTodoList} setTodoLists={setTodoLists}/>}
-                </div>
-            ))}
+            <Button onClick={createTodoList} variant="contained" color="primary">Create Todo List</Button>
+            <List>
+                {todoLists.map((list) => (
+                    <ListItem key={list.id} className="todo-list-item">
+                        <h2>{list.title}</h2>
+                        <Button onClick={() => handleEditTodoList(list)} variant="contained" color="primary">Edit Name</Button>
+                        <Button onClick={() => handleCreateTask(list)} variant="contained" color="primary">Create Task</Button>
+                        {isTaskFormVisible && creatingTaskForList === list &&
+                            <TaskForm onSubmit={handleTaskCreated}/>}
+                        {isTodoListFormVisible && selectedList === list.id && editTodoList === list &&
+                            <EditTodoListForm todoList={editTodoList} setTodoLists={setTodoLists}/>}
+                    </ListItem>
+                ))}
+            </List>
         </div>
     );
 };

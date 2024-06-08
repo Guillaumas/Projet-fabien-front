@@ -1,5 +1,8 @@
 import React, {useState} from 'react';
 import {fetchData, updateData} from "../tools/requests";
+import Button from '@material-ui/core/Button';
+import TextField from '@material-ui/core/TextField';
+import FormControl from '@material-ui/core/FormControl';
 
 const EditLabelForm = ({label, setLabels}) => {
     const [name, setName] = useState(label.name);
@@ -12,15 +15,15 @@ const EditLabelForm = ({label, setLabels}) => {
     };
 
     return (
-        <form onSubmit={handleSubmit}>
-            <input
+        <FormControl onSubmit={handleSubmit}>
+            <TextField
                 type="text"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 required
             />
-            <button type="submit">Update Label</button>
-        </form>
+            <Button type="submit" variant="contained" color="primary">Update Label</Button>
+        </FormControl>
     );
 };
 

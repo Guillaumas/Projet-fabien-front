@@ -1,13 +1,15 @@
 import React, {useState} from 'react';
 import {postData} from "../tools/requests";
 import EditTaskForm from "./EditTaskForm";
+import Button from '@material-ui/core/Button';
+import TextField from '@material-ui/core/TextField';
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
 
 const Task = ({tasks, setTasks, todoListId}) => {
     const [newTask, setNewTask] = useState('');
     const [editTask, setEditTask] = useState(null);
-
     const [selectedTask, setSelectedTask] = useState(null);
-
 
     const handleAddTask = () => {
         if (!newTask) {
@@ -28,23 +30,23 @@ const Task = ({tasks, setTasks, todoListId}) => {
     return (
         <div>
             <h2>Tasks</h2>
-            <input
+            <TextField
                 type="text"
                 value={newTask}
                 onChange={(e) => setNewTask(e.target.value)}
                 placeholder="New task"
             />
-            <button onClick={handleAddTask}>Add Task</button>
-            <ul>
+            <Button onClick={handleAddTask} variant="contained" color="primary">Add Task</Button>
+            <List>
                 {tasks.map(task => (
-                    <li key={task.id}>
+                    <ListItem key={task.id}>
                         <span>{task.title}</span>
-                        <button onClick={() => handleEditTask(task)}>Details</button>
-                        <button>Tags</button>
+                        <Button onClick={() => handleEditTask(task)} variant="contained" color="primary">Details</Button>
+                        <Button variant="contained" color="primary">Tags</Button>
                         {selectedTask === task.id && editTask === task && <EditTaskForm task={editTask} setTasks={setTasks} />}
-                    </li>
+                    </ListItem>
                 ))}
-            </ul>
+            </List>
         </div>
     );
 };
