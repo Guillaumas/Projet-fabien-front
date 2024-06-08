@@ -1,12 +1,12 @@
 import React, {useState} from 'react';
-import {postData, fetchData} from "../tools/requests";
+import {fetchData, updateData} from "../tools/requests";
 
 const EditTaskForm = ({task, setTasks}) => {
     const [title, setTitle] = useState(task.title);
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        postData(`http://localhost:8080/api/tasks/${task.id}`, {title: title}, () => {
+        updateData(`http://localhost:8080/api/tasks/${task.id}`, {title: title}, () => {
             fetchData('http://localhost:8080/api/tasks', setTasks);
         });
     };

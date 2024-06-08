@@ -1,12 +1,12 @@
 import React, {useState} from 'react';
-import { postData, fetchData } from "../tools/requests";
+import {fetchData, updateData} from "../tools/requests";
 
 const EditLabelForm = ({label, setLabels}) => {
     const [name, setName] = useState(label.name);
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        postData(`http://localhost:8080/api/labels/${label.id}`, {name: name}, () => {
+        updateData(`http://localhost:8080/api/labels/${label.id}`, {name: name}, () => {
             fetchData('http://localhost:8080/api/labels', setLabels);
         });
     };

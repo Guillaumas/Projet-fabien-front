@@ -24,7 +24,6 @@ function App() {
         <Router>
             <div className="App">
                 <Routes>
-                    //check if the user is authenticated before accesing login/register page
                     <Route path="/login" element={isAuthenticated ? <Navigate to="/dashboard"/> : <LoginForm onLogin={handleLogin}/>}/>
                     <Route path="/signup" element={isAuthenticated ? <Navigate to="/dashboard"/> : <SignupForm onSignup={handleLogin}/>}/>
                     <Route path="/dashboard"
