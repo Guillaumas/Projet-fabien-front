@@ -3,20 +3,14 @@ import {BrowserRouter as Router, Navigate, Route, Routes} from 'react-router-dom
 import LoginForm from "./components/userConnection/LoginForm";
 import SignupForm from "./components/userConnection/SignupForm";
 import Dashboard from "./components/UI/Dashboard";
+import {useAuth0} from '@auth0/auth0-react';
 
 function App() {
-    const [isAuthenticated, setIsAuthenticated] = useState(false);
+    const { isAuthenticated, logout } = useAuth0();
     const [successMessage, setSuccessMessage] = useState('');
 
-    const handleLogin = () => {
-        setIsAuthenticated(true);
-        setSuccessMessage('Login successful!');
-    };
-
     const handleLogout = () => {
-        localStorage.removeItem('token');
-        window.location.reload();
-        setIsAuthenticated(false);
+        logout();
         setSuccessMessage('');
     };
 
@@ -24,14 +18,13 @@ function App() {
         <Router>
             <div className="App">
                 <Routes>
-                    //check if the user is authenticated before accesing login/register page
-                    <Route path="/login" element={isAuthenticated ? <Navigate to="/dashboard"/> : <LoginForm onLogin={handleLogin}/>}/>
-                    <Route path="/signup" element={isAuthenticated ? <Navigate to="/dashboard"/> : <SignupForm onSignup={handleLogin}/>}/>
+                    <Route path="/login" element={!isAuthenticated ? <LoginForm/> : <Navigate to="/dashboard"/>}/>
+                    <Route path="/signup" element={!isAuthenticated ? <SignupForm/> : <Navigate to="/dashboard"/>}/>
                     <Route path="/dashboard"
                            element={isAuthenticated ?
                                <Dashboard onLogout={handleLogout} successMessage={successMessage}/> :
                                <Navigate to="/login"/>}/>
-                    <Route path="/" element={<Navigate to="/login"/>}/>
+                    <Route path="/" element={!isAuthenticated ? <LoginForm/> : <Navigate to="/dashboard"/>}/>
                 </Routes>
             </div>
         </Router>

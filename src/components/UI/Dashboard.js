@@ -1,10 +1,12 @@
 import React, {useState, useEffect} from 'react';
-import {fetchData, postData} from "../tools/requests";
+import {useAuth0} from '@auth0/auth0-react';
 import TodoList from './TodoList';
 import Task from './Task';
 import Label from './Label';
+import { fetchData, postData } from '../tools/requests';
 
 function Dashboard({onLogout, successMessage}) {
+    const { isAuthenticated, logout, getAccessTokenSilently } = useAuth0();
     const [tasks, setTasks] = useState([]);
     const [labels, setLabels] = useState([]);
     const [todoLists, setTodoLists] = useState([]);
@@ -12,28 +14,24 @@ function Dashboard({onLogout, successMessage}) {
     const [selectedTask, setSelectedTask] = useState(null);
 
     useEffect(() => {
-        fetchData('http://localhost:8080/api/tasks', setTasks);
-        fetchData('http://localhost:8080/api/labels', setLabels);
-        fetchData('http://localhost:8080/api/todolists', setTodoLists);
-    }, []);
+        const fetchResources = async () => {
+            const token = await getAccessTokenSilently({
+                audience: process.env.REACT_APP_AUTH0_AUDIENCE.toString(),
+            });
+            console.log(token);
+            fetchData('http://localhost:8080/api/tasks', setTasks, token);
+            fetchData('http://localhost:8080/api/labels', setLabels, token);
+            fetchData('http://localhost:8080/api/todolists', setTodoLists, token);
+        };
+        fetchResources();
+    }, [getAccessTokenSilently]);
 
-
-    const checkToken = () => {
-        const token = localStorage.getItem('token');
-        if (!token) {
-            onLogout();
-            return;
-        }
-        postData('http://localhost:8080/api/auth/checkToken', { token: token }, (response) => {
-            if (!response.valid) {
-                onLogout();
-            }
-        });
-    };
 
     useEffect(() => {
-        checkToken();
-    }, []);
+        if (!isAuthenticated) {
+            logout();
+        }
+    }, [isAuthenticated, logout]);
 
     return (
         <div>

@@ -1,18 +1,23 @@
 import React, { useState } from 'react';
+import { useAuth0 } from '@auth0/auth0-react';
 import { postData, fetchData } from "../tools/requests";
 
 const TodoList = ({ todoLists, setTodoLists }) => {
+    const { getAccessTokenSilently } = useAuth0();
     const [newListTitle, setNewListTitle] = useState('');
 
-    const createTodoList = () => {
+    const createTodoList = async () => {
         if (!newListTitle) {
             console.log('List title cannot be null or empty');
             return;
         }
+        const token = await getAccessTokenSilently({
+            audience: process.env.REACT_APP_AUTH0_AUDIENCE.toString(),
+        });
         postData('http://localhost:8080/api/todolists', {title: newListTitle}, () => {
             setNewListTitle('');
-            fetchData('http://localhost:8080/api/todolists', setTodoLists);
-        });
+            fetchData('http://localhost:8080/api/todolists', setTodoLists, token);
+        }, token);
     };
 
     return (
