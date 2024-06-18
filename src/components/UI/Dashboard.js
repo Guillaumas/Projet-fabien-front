@@ -16,7 +16,7 @@ function Dashboard({onLogout, successMessage}) {
     useEffect(() => {
         const fetchResources = async () => {
             const token = await getAccessTokenSilently({
-                audience: process.env.REACT_APP_AUTH0_AUDIENCE.toString(),
+                audience: process.env.REACT_APP_AUTH0_AUDIENCE,
             });
             console.log(token);
             fetchData('http://localhost:8080/api/tasks', setTasks, token);
