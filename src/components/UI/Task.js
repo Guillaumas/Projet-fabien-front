@@ -1,23 +1,28 @@
-import React, {useState} from 'react';
-import {postData} from "../tools/requests";
+import React, { useState } from 'react';
+import { useAuth0 } from '@auth0/auth0-react';
+import { postData } from "../tools/requests";
 import EditTaskForm from "./EditTaskForm";
 
-const Task = ({tasks, setTasks, todoListId}) => {
+const Task = ({ tasks, setTasks, todoListId }) => {
+    const { getAccessTokenSilently } = useAuth0();
     const [newTask, setNewTask] = useState('');
     const [editTask, setEditTask] = useState(null);
 
     const [selectedTask, setSelectedTask] = useState(null);
 
 
-    const handleAddTask = () => {
+    const handleAddTask = async () => {
         if (!newTask) {
             console.log('Task name cannot be null or empty');
             return;
         }
+        const token = await getAccessTokenSilently({
+            audience: process.env.REACT_APP_AUTH0_AUDIENCE.toString(),
+        });
         postData('http://localhost:8080/api/tasks', {title: newTask, todoListId: todoListId}, (newTask) => {
             setTasks([...tasks, newTask]);
             setNewTask('');
-        });
+        }, token);
     };
 
     const handleEditTask = (task) => {
