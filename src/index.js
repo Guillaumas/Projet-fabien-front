@@ -18,8 +18,8 @@ root.render(
         <Auth0Provider
             domain={domain}
             clientId={clientId}
-            audience={audience}
             authorizationParams={{
+                audience: audience,
                 redirect_uri: window.location.origin,
                 scope: 'read:current_user'
             }}
