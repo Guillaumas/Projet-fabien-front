@@ -4,7 +4,7 @@ import { postData, fetchData } from "../tools/requests";
 import EditTodoListForm from "./EditTodoListForm";
 import TaskForm from "./TaskForm";
 
-const TodoList = ({ todoLists, setTodoLists }) => {
+const TodoList = ({ todoLists = [], setTodoLists }) => {
     const { getAccessTokenSilently } = useAuth0();
     const [newListTitle, setNewListTitle] = useState('');
     const [editTodoList, setEditTodoList] = useState(null);
