@@ -1,17 +1,46 @@
-import React from 'react';
+import React, {useState} from 'react';
+import {postData} from "../tools/requests";
+import EditTaskForm from "./EditTaskForm";
 
-const Task = ({ task, onDelete, onUpdate }) => {
-    if (!task) {
-        return null;
-    }
+const Task = ({tasks, setTasks, todoListId}) => {
+    const [newTask, setNewTask] = useState('');
+    const [editTask, setEditTask] = useState(null);
+
+    const handleAddTask = () => {
+        if (!newTask) {
+            console.log('Task name cannot be null or empty');
+            return;
+        }
+        postData('http://localhost:8080/api/tasks', {title: newTask, todoListId: todoListId}, (newTask) => {
+            setTasks([...tasks, newTask]);
+            setNewTask('');
+        });
+    };
+
+    const handleEditTask = (task) => {
+        setEditTask(task)
+    };
 
     return (
-        <div className="task">
-            <h3>{task.title}</h3>
-            <p>{task.description}</p>
-            <p>{task.completed ? 'Completed' : 'Incomplete'}</p>
-            <button onClick={() => onDelete(task.id)}>Delete</button>
-            <button onClick={() => onUpdate(task)}>Update</button>
+        <div>
+            <h2>Tasks</h2>
+            <input
+                type="text"
+                value={newTask}
+                onChange={(e) => setNewTask(e.target.value)}
+                placeholder="New task"
+            />
+            <button onClick={handleAddTask}>Add Task</button>
+            <ul>
+                {tasks.map(task => (
+                    <li key={task.id}>
+                        <span>{task.title}</span>
+                        <button onClick={() => handleEditTask(task)}>Details</button>
+                        <button>Tags</button>
+                        {editTask === task && <EditTaskForm task={editTask} setTasks={setTasks} />}
+                    </li>
+                ))}
+            </ul>
         </div>
     );
 };

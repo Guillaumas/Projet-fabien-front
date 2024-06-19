@@ -20,6 +20,7 @@ function App() {
                 <Routes>
                     <Route path="/login" element={!isAuthenticated ? <LoginForm/> : <Navigate to="/dashboard"/>}/>
                     <Route path="/signup" element={!isAuthenticated ? <SignupForm/> : <Navigate to="/dashboard"/>}/>
+
                     <Route path="/dashboard"
                            element={isAuthenticated ?
                                <Dashboard onLogout={handleLogout} successMessage={successMessage}/> :
