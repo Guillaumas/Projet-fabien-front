@@ -1,12 +1,12 @@
-import React, {useState, useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import {useAuth0} from '@auth0/auth0-react';
 import TodoList from './TodoList';
 import Task from './Task';
 import Label from './Label';
-import { fetchData, postData } from '../tools/requests';
+import axiosInstance from "../../axiosConfig";
 
 function Dashboard({onLogout, successMessage}) {
-    const { isAuthenticated, logout, getAccessTokenSilently } = useAuth0();
+    const {isAuthenticated, logout, getAccessTokenSilently, user, isLoading} = useAuth0();
     const [tasks, setTasks] = useState([]);
     const [labels, setLabels] = useState([]);
     const [todoLists, setTodoLists] = useState([]);
@@ -18,28 +18,44 @@ function Dashboard({onLogout, successMessage}) {
             const token = await getAccessTokenSilently({
                 audience: process.env.REACT_APP_AUTH0_AUDIENCE,
             });
-            console.log(token);
-            fetchData('http://localhost:8080/api/tasks', setTasks, token);
-            fetchData('http://localhost:8080/api/labels', setLabels, token);
-            fetchData('http://localhost:8080/api/todolists', setTodoLists, token);
+            axiosInstance.get('http://localhost:8080/api/tasks', {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            }).then(response => {
+                setTasks(response.data);
+            });
+            axiosInstance.get('http://localhost:8080/api/labels', {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            }).then(response => {
+                setLabels(response.data);
+            });
+            axiosInstance.get('http://localhost:8080/api/todolists', {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            }).then(response => {
+                setTodoLists(response.data);
+            });
         };
         fetchResources();
     }, [getAccessTokenSilently]);
-
-
-    useEffect(() => {
-        if (!isAuthenticated) {
-            logout();
-        }
-    }, [isAuthenticated, logout]);
+    if (isLoading) return <div>Loading</div>
 
     return (
         <div>
             <h1>Dashboard</h1>
+            <p>Welcome {user.name}</p>
             {successMessage && <p>{successMessage}</p>}
             <button onClick={onLogout}>Logout</button>
-            <TodoList todoLists={todoLists} setTodoLists={setTodoLists} setSelectedTodoList={setSelectedTodoList} />
-            {selectedTodoList && (selectedTodoList.tasks.length > 0 ? <Task tasks={tasks} setTasks={setTasks} todoListId={selectedTodoList.id} setSelectedTask={setSelectedTask} /> : <Label task={{labels: []}} setTask={setSelectedTask} />)}            {selectedTask && <Label task={selectedTask} setTask={setSelectedTask} />}
+            <TodoList todoLists={todoLists} setTodoLists={setTodoLists} setSelectedTodoList={setSelectedTodoList}/>
+            {selectedTodoList && (selectedTodoList.tasks.length > 0 ?
+                <Task tasks={tasks} setTasks={setTasks} todoListId={selectedTodoList.id}
+                      setSelectedTask={setSelectedTask}/> :
+                <Label task={{labels: []}} setTask={setSelectedTask}/>)} {selectedTask &&
+            <Label task={selectedTask} setTask={setSelectedTask}/>}
         </div>
     );
 }

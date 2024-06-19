@@ -1,5 +1,7 @@
 import axios from 'axios';
 import {postData} from "./components/tools/requests";
+import {getUserId, setUserId} from "./auth";
+import {getToken} from "./auth";
 
 const axiosInstance = axios.create({
     baseURL: 'http://localhost:8080',
@@ -10,9 +12,12 @@ const axiosInstance = axios.create({
 });
 
 axiosInstance.interceptors.request.use((request) => {
-    const token = localStorage.getItem('token');
+    const token = getToken();
     if (token) {
         request.headers['Authorization'] = `Bearer ${token}`;
+    }
+    if (getUserId() != null) {
+        request.headers['UserId'] = getUserId();
     }
     return request;
 });
@@ -24,9 +29,21 @@ axiosInstance.interceptors.response.use(request => request, error => {
             localStorage.setItem('token', response.token);
             return axiosInstance.request(error.config);
         });
+        return Promise.reject(error);
     }
-    return Promise.reject(error);
+    else {
+        return Promise.reject(error);
+    }
+});
 
+axiosInstance.interceptors.response.use((response) => {
+    if (response.status === 206) {
+        const userId = response.headers['userid'] ? response.headers['userid'] : response.headers['UserId'];
+        setUserId(userId);
+    }
+    return response;
+}, (error) => {
+    return Promise.reject(error);
 });
 
 export default axiosInstance;

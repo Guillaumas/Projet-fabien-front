@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
-import { useAuth0 } from '@auth0/auth0-react';
-import { postData } from "../tools/requests";
+import React, {useState} from 'react';
+import {useAuth0} from '@auth0/auth0-react';
 import EditLabelForm from "./EditLabelForm";
+import axiosInstance from "../../axiosConfig";
 
-const Label = ({ task, setTask }) => {
-    const { getAccessTokenSilently } = useAuth0();
+const Label = ({task, setTask}) => {
+    const {getAccessTokenSilently} = useAuth0();
 
     const [newLabel, setNewLabel] = useState('');
     const [editLabel, setEditLabel] = useState(null);
@@ -16,12 +16,16 @@ const Label = ({ task, setTask }) => {
             return;
         }
         const token = await getAccessTokenSilently({
-            audience: process.env.REACT_APP_AUTH0_AUDIENCE.toString(),
+            audience: process.env.REACT_APP_AUTH0_AUDIENCE,
         });
-        postData('http://localhost:8080/api/labels', {name: newLabel, taskId: task.id}, (newLabel) => {
-            setTask({...task, labels: [...task.labels, newLabel]});
+        axiosInstance.post('http://localhost:8080/api/labels', {name: newLabel, taskId: task.id}, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        }).then(response => {
+            setTask({...task, labels: [...task.labels, response.data]});
             setNewLabel('');
-        }, token);
+        });
     };
 
     const handleEditLabel = (label) => {

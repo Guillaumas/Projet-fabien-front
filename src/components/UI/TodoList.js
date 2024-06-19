@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
-import { useAuth0 } from '@auth0/auth0-react';
-import { postData, fetchData } from "../tools/requests";
+import React, {useState} from 'react';
+import {useAuth0} from '@auth0/auth0-react';
 import EditTodoListForm from "./EditTodoListForm";
 import TaskForm from "./TaskForm";
+import axiosInstance from "../../axiosConfig";
 
-const TodoList = ({ todoLists = [], setTodoLists }) => {
-    const { getAccessTokenSilently } = useAuth0();
+const TodoList = ({todoLists = [], setTodoLists}) => {
+    const {getAccessTokenSilently} = useAuth0();
     const [newListTitle, setNewListTitle] = useState('');
     const [editTodoList, setEditTodoList] = useState(null);
     const [selectedList, setSelectedList] = useState(null);
@@ -20,12 +20,22 @@ const TodoList = ({ todoLists = [], setTodoLists }) => {
             return;
         }
         const token = await getAccessTokenSilently({
-            audience: process.env.REACT_APP_AUTH0_AUDIENCE.toString(),
+            audience: process.env.REACT_APP_AUTH0_AUDIENCE,
         });
-        postData('http://localhost:8080/api/todolists', {title: newListTitle}, () => {
+        axiosInstance.post('http://localhost:8080/api/todolists', {title: newListTitle}, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        }).then(() => {
             setNewListTitle('');
-            fetchData('http://localhost:8080/api/todolists', setTodoLists, token);
-        }, token);
+            axiosInstance.get('http://localhost:8080/api/todolists', {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            }).then(response => {
+                setTodoLists(response.data);
+            });
+        });
     };
 
     const handleEditTodoList = (list) => {
@@ -61,7 +71,7 @@ const TodoList = ({ todoLists = [], setTodoLists }) => {
                 onChange={(e) => setNewListTitle(e.target.value)}
             />
             <button onClick={createTodoList}>Create Todo List</button>
-            {todoLists.map((list) => (
+            {Array.isArray(todoLists) && todoLists.map((list) => (
                 <div key={list.id}>
                     <h2>{list.title}</h2>
                     <button onClick={() => handleEditTodoList(list)}>Edit Name</button>

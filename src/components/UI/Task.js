@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
-import { useAuth0 } from '@auth0/auth0-react';
-import { postData } from "../tools/requests";
+import React, {useState} from 'react';
+import {useAuth0} from '@auth0/auth0-react';
 import EditTaskForm from "./EditTaskForm";
+import axiosInstance from "../../axiosConfig";
 
-const Task = ({ tasks, setTasks, todoListId }) => {
-    const { getAccessTokenSilently } = useAuth0();
+const Task = ({tasks, setTasks, todoListId}) => {
+    const {getAccessTokenSilently} = useAuth0();
     const [newTask, setNewTask] = useState('');
     const [editTask, setEditTask] = useState(null);
 
@@ -17,12 +17,16 @@ const Task = ({ tasks, setTasks, todoListId }) => {
             return;
         }
         const token = await getAccessTokenSilently({
-            audience: process.env.REACT_APP_AUTH0_AUDIENCE.toString(),
+            audience: process.env.REACT_APP_AUTH0_AUDIENCE,
         });
-        postData('http://localhost:8080/api/tasks', {title: newTask, todoListId: todoListId}, (newTask) => {
-            setTasks([...tasks, newTask]);
+        axiosInstance.post('http://localhost:8080/api/tasks', {title: newTask, todoListId: todoListId}, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        }).then(response => {
+            setTasks([...tasks, response.data]);
             setNewTask('');
-        }, token);
+        });
     };
 
     const handleEditTask = (task) => {
@@ -46,7 +50,8 @@ const Task = ({ tasks, setTasks, todoListId }) => {
                         <span>{task.title}</span>
                         <button onClick={() => handleEditTask(task)}>Details</button>
                         <button>Tags</button>
-                        {selectedTask === task.id && editTask === task && <EditTaskForm task={editTask} setTasks={setTasks} />}
+                        {selectedTask === task.id && editTask === task &&
+                            <EditTaskForm task={editTask} setTasks={setTasks}/>}
                     </li>
                 ))}
             </ul>

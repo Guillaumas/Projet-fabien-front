@@ -23,7 +23,7 @@ root.render(
             authorizationParams={{
                 audience: audience,
                 redirect_uri: window.location.origin,
-                scope: 'read:current_user'
+                scope: 'read:current_user profile'
             }}
 
         >

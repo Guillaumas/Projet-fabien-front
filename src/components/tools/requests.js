@@ -1,4 +1,5 @@
 import axiosInstance from "../../axiosConfig";
+import {setUserId} from "../../auth";
 
 
 export async function authenticate(url, data, onSuccess, onError) {
@@ -10,21 +11,31 @@ export async function authenticate(url, data, onSuccess, onError) {
     } catch (err) {
         onError(err);
     }
-};
+}
 
 
-export const fetchData = async (url, setData, token, page = 1) => {
+export const fetchData = async (url, setData, token, page = 0) => {
     const response = await fetch(`${url}?page=${page}`, {
         headers: {
             Authorization: `Bearer ${token}`,
         },
     });
-    const data = await response.json();
-    setData(data);
+    if (response.status === 206) {
+        const userId = response.headers.get('UserId');
+        setUserId(userId);
+    }
+    if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const contentType = response.headers.get('Content-Type');
+    if (contentType && contentType.includes('application/json')) {
+        const data = await response.json();
+        setData(data);
+    }
 };
 
-export const postData = async (url, data, callback, token, page = 1) => {
-    const response = await fetch(`${url}?page=${page}`, {
+export const postData = async (url, data, callback, token) => {
+    const response = await fetch( url,{
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -32,8 +43,18 @@ export const postData = async (url, data, callback, token, page = 1) => {
         },
         body: JSON.stringify(data),
     });
-    const responseData = await response.json();
-    callback(responseData);
+    if (response.status === 206) {
+        const userId = response.headers.get('UserId');
+        setUserId(userId);
+    }
+    if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const contentType = response.headers.get('Content-Type');
+    if (contentType && contentType.includes('application/json')) {
+        const responseData = await response.json();
+        callback(responseData);
+    }
 };
 
 export async function deleteData(url, onSuccess) {
