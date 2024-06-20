@@ -1,15 +1,13 @@
 import React, {useState} from 'react';
 import {useAuth0} from '@auth0/auth0-react';
 import EditTaskForm from "./EditTaskForm";
-import axiosInstance from "../../axiosConfig";
+import {postData} from "../tools/requests";
 
-const Task = ({tasks, setTasks, todoListId}) => {
+const Task = ({tasks, setTasks, todoListId, setSelectedTask}) => {
     const {getAccessTokenSilently} = useAuth0();
     const [newTask, setNewTask] = useState('');
     const [editTask, setEditTask] = useState(null);
-
-    const [selectedTask, setSelectedTask] = useState(null);
-
+    const [selectedTaskId, setSelectedTaskId] = useState(null);
 
     const handleAddTask = async () => {
         if (!newTask) {
@@ -19,18 +17,14 @@ const Task = ({tasks, setTasks, todoListId}) => {
         const token = await getAccessTokenSilently({
             audience: process.env.REACT_APP_AUTH0_AUDIENCE,
         });
-        axiosInstance.post('http://localhost:8080/api/tasks', {title: newTask, todoListId: todoListId}, {
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
-        }).then(response => {
+        postData('/api/tasks', {title: newTask, todoListId: todoListId}, token, (response) => {
             setTasks([...tasks, response.data]);
             setNewTask('');
         });
     };
 
     const handleEditTask = (task) => {
-        setSelectedTask(task.id);
+        setSelectedTaskId(task.id);
         setEditTask(task);
     };
 
@@ -50,7 +44,7 @@ const Task = ({tasks, setTasks, todoListId}) => {
                         <span>{task.title}</span>
                         <button onClick={() => handleEditTask(task)}>Details</button>
                         <button>Tags</button>
-                        {selectedTask === task.id && editTask === task &&
+                        {selectedTaskId === task.id && editTask === task &&
                             <EditTaskForm task={editTask} setTasks={setTasks}/>}
                     </li>
                 ))}

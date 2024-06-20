@@ -1,9 +1,15 @@
-import React, { useState, useEffect } from 'react';
+import React, {useState, useEffect} from 'react';
 import LabelPopup from './LabelPopup';
+import {postData} from "../tools/requests";
+import {useAuth0} from '@auth0/auth0-react';
 
 
-const TaskForm = ({ onSubmit, initialTask }) => {
-    const [task, setTask] = useState({ title: '', description: '', completed: false });
+const TaskForm = async ({onSubmit, initialTask}) => {
+    const [task, setTask] = useState({title: '', description: '', completed: false});
+    const {getAccessTokenSilently} = useAuth0();
+    const token = await getAccessTokenSilently({
+        audience: process.env.REACT_APP_AUTH0_AUDIENCE,
+    });
 
     useEffect(() => {
         if (initialTask) {
@@ -12,18 +18,25 @@ const TaskForm = ({ onSubmit, initialTask }) => {
     }, [initialTask]);
 
     const handleChange = (e) => {
-        const { name, value } = e.target;
-        setTask({ ...task, [name]: value });
+        const {name, value} = e.target;
+        setTask({...task, [name]: value});
     };
 
     const handleSubmit = (e) => {
         e.preventDefault();
         onSubmit(task);
-        setTask({ title: '', description: '', completed: false });
+        postData('/api/tasks', {
+            title: task.title,
+            description: task.description,
+            completed: task.completed
+        }, token, (response) => {
+            onSubmit(response.data);
+            setTask({title: '', description: '', completed: false});
+        });
     };
 
     const handleLabelCreated = (newLabel) => {
-        setTask({ ...task, labels: [...task.labels, newLabel] });
+        setTask({...task, labels: [...task.labels, newLabel]});
     };
 
     return (
@@ -43,7 +56,7 @@ const TaskForm = ({ onSubmit, initialTask }) => {
                 onChange={handleChange}
                 required
             />
-            <LabelPopup onLabelCreated={handleLabelCreated} />
+            <LabelPopup onLabelCreated={handleLabelCreated}/>
             <button type="submit">Save Task</button>
         </form>
     );

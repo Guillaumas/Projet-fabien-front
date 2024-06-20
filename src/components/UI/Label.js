@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import {useAuth0} from '@auth0/auth0-react';
 import EditLabelForm from "./EditLabelForm";
-import axiosInstance from "../../axiosConfig";
+import {postData} from "../tools/requests";
 
 const Label = ({task, setTask}) => {
     const {getAccessTokenSilently} = useAuth0();
@@ -18,11 +18,7 @@ const Label = ({task, setTask}) => {
         const token = await getAccessTokenSilently({
             audience: process.env.REACT_APP_AUTH0_AUDIENCE,
         });
-        axiosInstance.post('http://localhost:8080/api/labels', {name: newLabel, taskId: task.id}, {
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
-        }).then(response => {
+        postData('/api/labels', {name: newLabel, taskId: task.id}, token, (response) => {
             setTask({...task, labels: [...task.labels, response.data]});
             setNewLabel('');
         });

@@ -1,13 +1,28 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {fetchData, updateData} from "../tools/requests";
+import {useAuth0} from "@auth0/auth0-react";
 
-const EditTaskForm = ({task, setTasks}) => {
+const EditTaskForm = ({task, setTasks, setLabels}) => {
+    const {getAccessTokenSilently} = useAuth0();
     const [title, setTitle] = useState(task.title);
 
-    const handleSubmit = (e) => {
+    useEffect(() => {
+        const fetchLabels = async () => {
+            const token = await getAccessTokenSilently({
+                audience: process.env.REACT_APP_AUTH0_AUDIENCE,
+            });
+            await fetchData(`/api/tasks/${task.id}/labels`, setLabels, token);
+        };
+        fetchLabels();
+    }, [getAccessTokenSilently, task.id]);
+
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        updateData(`http://localhost:8080/api/tasks/${task.id}`, {title: title}, () => {
-            fetchData('http://localhost:8080/api/tasks', setTasks);
+        const token = await getAccessTokenSilently({
+            audience: process.env.REACT_APP_AUTH0_AUDIENCE,
+        });
+        await updateData(`/api/tasks/${task.id}`, {title: title}, token, () => {
+            fetchData('/api/tasks', setTasks, token);
         });
     };
 

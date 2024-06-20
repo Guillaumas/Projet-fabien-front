@@ -1,10 +1,11 @@
-import React, {useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {useAuth0} from '@auth0/auth0-react';
 import EditTodoListForm from "./EditTodoListForm";
 import TaskForm from "./TaskForm";
-import axiosInstance from "../../axiosConfig";
+import {fetchData, postData} from "../tools/requests";
+import {UserIdContext} from '../../UserIdContext';
 
-const TodoList = ({todoLists = [], setTodoLists}) => {
+const TodoList = () => {
     const {getAccessTokenSilently} = useAuth0();
     const [newListTitle, setNewListTitle] = useState('');
     const [editTodoList, setEditTodoList] = useState(null);
@@ -12,29 +13,31 @@ const TodoList = ({todoLists = [], setTodoLists}) => {
     const [creatingTaskForList, setCreatingTaskForList] = useState(null);
     const [isTaskFormVisible, setIsTaskFormVisible] = useState(false);
     const [isTodoListFormVisible, setIsTodoListFormVisible] = useState(false);
+    const { userId } = useContext(UserIdContext);
+    const [todoLists, setTodoLists] = useState([]);
 
+    useEffect(() => {
+        if (!userId) return;
+        const fetchResources = async () => {
+            const token = await getAccessTokenSilently({
+                audience: process.env.REACT_APP_AUTH0_AUDIENCE,
+            });
+            await fetchData(`/api/todolists/user/${userId}`, setTodoLists, token);
+        };
+        fetchResources();
+    }, [getAccessTokenSilently, setTodoLists, userId]);
 
     const createTodoList = async () => {
         if (!newListTitle) {
-            console.log('List title cannot be null or empty');
+            alert('List title cannot be null or empty');
             return;
         }
         const token = await getAccessTokenSilently({
             audience: process.env.REACT_APP_AUTH0_AUDIENCE,
         });
-        axiosInstance.post('http://localhost:8080/api/todolists', {title: newListTitle}, {
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
-        }).then(() => {
+        postData(`/api/todolists/user/${userId}`, {title: newListTitle}, token, () => {
             setNewListTitle('');
-            axiosInstance.get('http://localhost:8080/api/todolists', {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            }).then(response => {
-                setTodoLists(response.data);
-            });
+            fetchData(`/api/todolists/user/${userId}`, setTodoLists, token);
         });
     };
 
@@ -60,6 +63,9 @@ const TodoList = ({todoLists = [], setTodoLists}) => {
         setTodoLists(updatedLists);
         setCreatingTaskForList(null);
     };
+console.log(todoLists)
+
+
 
     return (
         <div>

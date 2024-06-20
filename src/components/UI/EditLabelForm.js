@@ -1,13 +1,18 @@
 import React, {useState} from 'react';
-import {fetchData, updateData} from "../tools/requests";
+import {useAuth0} from '@auth0/auth0-react';
+import {updateData, fetchData} from "../tools/requests";
 
 const EditLabelForm = ({label, setLabels}) => {
+    const {getAccessTokenSilently} = useAuth0();
     const [name, setName] = useState(label.name);
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        updateData(`http://localhost:8080/api/labels/${label.id}`, {name: name}, () => {
-            fetchData('http://localhost:8080/api/labels', setLabels);
+        const token = await getAccessTokenSilently({
+            audience: process.env.REACT_APP_AUTH0_AUDIENCE,
+        });
+        await updateData(`/api/labels/${label.id}`, {name: name}, token, () => {
+            fetchData('/api/labels', setLabels, token);
         });
     };
 
